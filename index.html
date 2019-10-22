@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Drop Box</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        input {
+            font-size: 16px;
+            padding: 10px;
+            display: block;
+            width: 300px;
+            border: none;
+            border: 1px solid #ccc;
+        }
+        input:focus {
+            outline: none;
+        }
+        #drop-box-options {
+            width: 322px;
+            background-color: #fff;
+            -webkit-box-shadow: -1px 6px 5px 2px rgba(0,0,0,0.25);
+            -moz-box-shadow: -1px 6px 5px 2px rgba(0,0,0,0.25);
+            box-shadow: -1px 6px 5px 2px rgba(0,0,0,0.25);
+        }
+        .option {
+            background-color: #fff;
+            padding: 20px;
+        }
+        .option:hover {
+            background-color: rgb(180, 180, 180);
+        }
+        .checks {
+            display: block;
+        }
+        .check-options {
+            background-color: #fff;
+            padding: 20px;
+        }
+        #my-select {
+            width: 330px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+            Выбрано:
+            <div class="checks">
+                <div class="check-options" v-for="option in optionChecks" v-html="option.content"></div>
+            </div>
+            <div id="my-select">
+                <input v-model="inputValue" @keyup.enter="search(inputValue)" type="text" @focus="visible = true">
+                <div v-show="visible" id="drop-box-options">
+                    <div v-on:click="checking(option)" class="option" v-for="option in options" v-html="option.content" :key="option.value"></div>
+                </div>
+            </div>
+    </div>
+    <script>
+    new Vue({
+        el: '#app',
+        data () {
+            return {
+                visible: false,
+                inputValue: '',
+                list: [
+                    {
+                        check: false,
+                        value: "Текст",
+                        content: '<div> Текст </div>'
+                    },
+                    {
+                        check: false,
+                        value: 'Собака',
+                        content: '<img width="30" src="https://cdn.pixabay.com/photo/2019/10/09/18/30/ridgeback-4537973_960_720.jpg" alt="Собака"/>'
+                    }
+                ],
+                options: [],
+            }
+        },
+        created () {
+            this.options = this.list
+        },
+        computed: {
+            filterOptions: function () {
+                if(this.options.length < 1) this.options = this.list
+                return this.options.filter((option) => {
+                    return option.value == this.inputValue
+                })
+            },
+            optionChecks: function () {
+                return this.options.filter((option) => {
+                    return option.check === true
+                })
+            }
+        },
+        methods: {
+            search () {
+                if(!this.inputValue) this.options = this.list
+                else this.options = this.filterOptions
+            },
+            checking (option) {
+                this.visible = false
+                option.check = true
+            }
+        }
+    })
+    </script>
+</body>
+</html>
